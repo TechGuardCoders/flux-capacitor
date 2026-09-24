@@ -1,10 +1,10 @@
-# QueuedGPU
+# Flux Capacitor
 
 **Queue-based autoscaler — scale on queue depth with cold-start mitigation and graceful scale-down.**
 
 The thesis: idle GPUs kill startups (money) and slow scale kills users (SLO). Both failures share one root: reactive controllers measure the wrong signal or act at the wrong time.
 
-Part of the [TechGuardCoders portfolio](https://github.com/orgs/TechGuardCoders/repositories): Cost Peep → Batcher → Spinal → Ball Knowledge → Bastion → Furnace → Truffle → Popcorn → **QueuedGPU** → …
+Part of the [TechGuardCoders portfolio](https://github.com/orgs/TechGuardCoders/repositories): Cost Peep → Batcher → Spinal → Ball Knowledge → Bastion → Furnace → Truffle → Popcorn → **Flux Capacitor** → …
 
 ## The controller's three disciplines
 
@@ -34,7 +34,7 @@ Part of the [TechGuardCoders portfolio](https://github.com/orgs/TechGuardCoders/
 
 ```bash
 uv venv --python 3.11 .venv && uv pip install pytest
-./.venv/Scripts/python queuedgpu.py      # burst drill
+./.venv/Scripts/python flux_capacitor.py      # burst drill
 ./.venv/Scripts/python -m pytest tests/ -q
 ```
 

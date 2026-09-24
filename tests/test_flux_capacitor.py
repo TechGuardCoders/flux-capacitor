@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from queuedgpu import Plant, Controller, Worker, COLD_START_S, TICK_S  # noqa: E402
+from flux_capacitor import Plant, Controller, Worker, COLD_START_S, TICK_S  # noqa: E402
 
 
 def test_cold_start_takes_time():

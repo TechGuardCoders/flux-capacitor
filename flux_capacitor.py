@@ -1,5 +1,5 @@
 """
-QueuedGPU - queue-based autoscaler.
+Flux Capacitor - queue-based autoscaler.
 
 The thesis: idle GPUs kill startups (money) and slow scale kills users (SLO).
 Both failures come from the same place: reactive scaling measures the wrong
@@ -234,9 +234,9 @@ def main():
 
     Path("benchmarks").mkdir(exist_ok=True)
     stamp = time.strftime("%Y%m%d_%H%M%S")
-    Path(f"benchmarks/queuedgpu_{stamp}.json").write_text(
+    Path(f"benchmarks/flux_capacitor_{stamp}.json").write_text(
         json.dumps({"with": with_ctrl, "without": without_ctrl}, indent=2))
-    print(f"saved benchmarks/queuedgpu_{stamp}.json")
+    print(f"saved benchmarks/flux_capacitor_{stamp}.json")
 
 
 if __name__ == "__main__":
