@@ -45,3 +45,7 @@ uv venv --python 3.11 .venv && uv pip install pytest
 ## What's next
 
 Cost Peep integration: the controller's decisions (scale events, queue depth) render on the dashboard — autoscaler eyes and hands in one portfolio.
+
+## Fleet: per-node scaling decisions
+
+`FleetController` drives a fleet of plants, one `Controller` per node, and each tick scales only the **hottest** node (highest queue depth per unit capacity — `NodeLoad.load`). Cold-start budget goes where the queue actually is; per-node damping/drain state is independent. A single-node fleet behaves identically to the plain `Controller`.

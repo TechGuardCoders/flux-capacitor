@@ -175,6 +175,60 @@ class Controller:
                 "online": online, "starting": starting, "total": total}
 
 
+# ------------------------------------------------------------ fleet
+#
+# Fleet awareness: multiple serving nodes, each with its own queue and worker
+# pool. The fleet controller scales only the HOTTEST node (highest queue depth
+# relative to capacity) per tick - cold-start budget is spent where the queue
+# actually is. Single-node usage (one entry) behaves exactly like Controller.
+
+
+@dataclass
+class NodeLoad:
+    """One node's instantaneous load, as the fleet controller sees it."""
+    name: str
+    queue: int
+    online: int
+    starting: int = 0
+    capacity_per_online: float = WORKER_RATE
+
+    @property
+    def capacity(self) -> float:
+        return max(self.online * self.capacity_per_online, 1.0)
+
+    @property
+    def load(self) -> float:
+        """Queue pressure: queue depth per unit of serving capacity."""
+        return self.queue / self.capacity
+
+
+def hottest_node(loads: list[NodeLoad]) -> NodeLoad:
+    """The node to scale: highest queue-per-capacity. Ties -> first listed."""
+    return max(loads, key=lambda n: n.load)
+
+
+class FleetController:
+    """Per-node scaling decisions across a fleet. Each node keeps its own
+    single-node Controller (damping/prewarm/drain state is per node); each
+    tick, only the hottest node with actionable pressure is driven."""
+
+    def __init__(self, nodes: list[str], **controller_kwargs):
+        self.nodes = {n: Controller(**controller_kwargs) for n in nodes}
+
+    def act(self, plants: dict) -> dict:
+        """plants: {node_name: Plant}. Scales the hottest node; others hold."""
+        loads = []
+        for name, plant in plants.items():
+            online = sum(1 for w in plant.workers if w.state == "online")
+            starting = sum(1 for w in plant.workers if w.state == "starting")
+            loads.append(NodeLoad(name=name, queue=len(plant.queue),
+                                  online=online, starting=starting))
+        target = hottest_node(loads)
+        action = self.nodes[target.name].act(plants[target.name])
+        return {"t": action["t"], "node": target.name, "action": action["action"],
+                "queue": action["queue"], "hottest_load": round(target.load, 3)}
+
+
 # ------------------------------------------------------------ drills
 
 
