@@ -49,3 +49,18 @@ Cost Peep integration: the controller's decisions (scale events, queue depth) re
 ## Fleet: per-node scaling decisions
 
 `FleetController` drives a fleet of plants, one `Controller` per node, and each tick scales only the **hottest** node (highest queue depth per unit capacity — `NodeLoad.load`). Cold-start budget goes where the queue actually is; per-node damping/drain state is independent. A single-node fleet behaves identically to the plain `Controller`.
+
+## Docker
+
+Multi-stage, multi-arch image (amd64 + arm64), runs as non-root.
+
+```bash
+# Build for your local arch
+docker build -t flux-capacitor .
+
+# Build for both arches with buildx
+docker buildx build --platform linux/amd64,linux/arm64 -t flux-capacitor .
+
+# Run
+docker run --rm  flux-capacitor
+```
